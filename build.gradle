@@ -1,0 +1,102 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.beryx.jlink' version '2.25.0'
+}
+
+group 'com.zatribune'
+version '1.0.0'
+description 'A Json Formatter Application.'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.9.0'
+}
+
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainModule = 'com.zatribune.devtools'
+    mainClass = 'com.zatribune.devtools.MainApplication'
+}
+
+javafx {
+    version = '18.0.1'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+dependencies {
+
+    implementation('com.fasterxml.jackson.core:jackson-databind:2.13.3')
+
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jlink {
+    //imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        name = 'app'
+    }
+
+    jpackage {
+        installerOptions = [
+                '--description', project.description,
+                '--copyright', 'Copyrigth 2022 ZaTribune'
+        ]
+        installerType = project.findProperty('installerType')
+        // we will pass this from the command line (example: gradle jpackage -PinstallerType=msi)
+        if (installerType == 'msi') {
+            imageOptions += ['--icon', 'src/main/resources/com/zatribune/devtools/icon.ico']
+            installerOptions += [
+                    '--win-per-user-install', '--win-dir-chooser',
+                    '--win-menu', '--win-shortcut'
+            ]
+        }
+        if (installerType == 'pkg') {
+            imageOptions += ['--icon', 'src/main/resources/com/zatribune/devtools/icon.ico']
+        }
+        if ( ['deb', 'rpm'].contains(installerType)) {
+            imageOptions += ['--icon', 'src/main/resources/icon.png']
+            installerOptions += [
+                    '--linux-menu-group', 'Office',
+                    '--linux-shortcut'
+            ]
+        }
+        if (installerType == 'deb') {
+            installerOptions += [
+                    '--linux-deb-maintainer', 'office@walczak.it'
+            ]
+        }
+        if (installerType == 'rpm') {
+            installerOptions += [
+                    '--linux-rpm-license-type', 'GPLv3'
+            ]
+        }
+    }
+}
+
+jpackage {
+    doFirst {
+        project.getProperty('installerType') // throws exception if its missing
+    }
+}
+
+jlinkZip {
+    group = 'distribution'
+}

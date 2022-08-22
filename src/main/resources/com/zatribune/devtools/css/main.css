@@ -1,0 +1,29 @@
+.root{
+    -fx-first:#444444;
+    -fx-second:#5f5f5f;
+    -fx-third:#999999;
+    -fx-fourth:#ff4444;
+    -fx-accent:#FFA000;
+    -fx-fifth:lightyellow;
+    -fx-sixth:#339900;
+    -fx-yellow: #f8ff65;
+}
+
+.rich-button {
+    -fx-border-radius: 0;
+    -fx-background-color:-fx-second;
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 0;
+    -fx-text-fill: white;
+}
+
+.rich-button Text {
+    -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.8) , 0, 0.0 , 0 , 1);
+}
+.rich-button:pressed{
+    -fx-background-color:
+            #000000,
+            linear-gradient(#7ebcea, #2f4b8f),
+            linear-gradient(#426ab7, #263e75),
+            linear-gradient(#395cab, #223768);
+}
