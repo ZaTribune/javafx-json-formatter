@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
@@ -9,10 +10,18 @@
 
 <AnchorPane stylesheets="@css/main.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zatribune.devtools.JsonController">
 
-   <SplitPane dividerPositions="0.5" prefHeight="424.0" prefWidth="733.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" promptText="input..." wrapText="true" />
+         <SplitPane dividerPositions="0.5" prefHeight="424.0" prefWidth="733.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" promptText="input..." wrapText="true">
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </TextArea>
       <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-         <TextFlow fx:id="textFlow" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" />
+         <TextFlow fx:id="textFlow" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+         </TextFlow>
       </ScrollPane>
    </SplitPane>
    <Button mnemonicParsing="false" onAction="#copy" prefWidth="50.0" styleClass="rich-button" text="copy" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="25.0" />
