@@ -1,4 +1,4 @@
-package com.zatribune.devtools;
+package com.tribune.devtools;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

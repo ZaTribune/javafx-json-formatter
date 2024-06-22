@@ -5,7 +5,7 @@ plugins {
     id 'org.beryx.jlink' version '2.25.0'
 }
 
-group 'com.zatribune'
+group 'com.tribune'
 version '1.0.0'
 description 'A Json Formatter Application.'
 
@@ -20,13 +20,13 @@ ext {
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
 application {
-    mainModule = 'com.zatribune.devtools'
-    mainClass = 'com.zatribune.devtools.MainApplication'
+    mainModule = 'com.tribune.devtools'
+    mainClass = 'com.tribune.devtools.MainApplication'
 }
 
 javafx {
@@ -36,7 +36,7 @@ javafx {
 
 dependencies {
 
-    implementation('com.fasterxml.jackson.core:jackson-databind:2.13.3')
+    implementation('com.fasterxml.jackson.core:jackson-databind:2.17.0')
 
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
@@ -57,19 +57,19 @@ jlink {
     jpackage {
         installerOptions = [
                 '--description', project.description,
-                '--copyright', 'Copyrigth 2022 ZaTribune'
+                '--copyright', 'Copyright 2022 ZaTribune'
         ]
         installerType = project.findProperty('installerType')
         // we will pass this from the command line (example: gradle jpackage -PinstallerType=msi)
         if (installerType == 'msi') {
-            imageOptions += ['--icon', 'src/main/resources/com/zatribune/devtools/icon.ico']
+            imageOptions += ['--icon', 'src/main/resources/com/tribune/devtools/icon.ico']
             installerOptions += [
                     '--win-per-user-install', '--win-dir-chooser',
                     '--win-menu', '--win-shortcut'
             ]
         }
         if (installerType == 'pkg') {
-            imageOptions += ['--icon', 'src/main/resources/com/zatribune/devtools/icon.ico']
+            imageOptions += ['--icon', 'src/main/resources/com/tribune/devtools/icon.ico']
         }
         if ( ['deb', 'rpm'].contains(installerType)) {
             imageOptions += ['--icon', 'src/main/resources/icon.png']

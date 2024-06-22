@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.text.TextFlow?>
+
+<SplitPane dividerPositions="0.3297785069729286, 0.7003007929997265" prefHeight="424.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tribune.devtools.JsonController">
+   <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" promptText="input..." wrapText="true" />
+   <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+      <TextFlow fx:id="textFlow" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" />
+   </ScrollPane>
+   <TextArea fx:id="textFinal" prefHeight="422.0" prefWidth="158.0" />
+</SplitPane>

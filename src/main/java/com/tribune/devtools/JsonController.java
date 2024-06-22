@@ -1,4 +1,4 @@
-package com.zatribune.devtools;
+package com.tribune.devtools;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,10 +22,13 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 public class JsonController implements Initializable {
 
-    private static final String INITIAL_INDENTION="   ";
+    private final static Logger log = Logger.getLogger(JsonController.class.getName());
+
+    private static final String INITIAL_INDENTION = "   ";
     @FXML
     private TextArea textArea;
 
@@ -33,7 +36,6 @@ public class JsonController implements Initializable {
     private TextFlow textFlow;
 
     private ObjectNode output;
-
 
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -53,54 +55,64 @@ public class JsonController implements Initializable {
             textFlow.getChildren().clear();
             doSomeMagic(output, null, INITIAL_INDENTION, textFlow);
         } catch (JsonProcessingException ex) {
-            handleJsonBoardError(ex,textArea,textFlow);
+            handleJsonBoardError(ex, textArea, textFlow);
             //ex.printStackTrace();
         }
     }
-    private void handleJsonBoardError(JsonProcessingException ex,TextArea jsonFormatInput,TextFlow textFlow){
-        if (jsonFormatInput.getText().length()==0) {//no need to do anything
+
+    private void handleJsonBoardError(JsonProcessingException ex, TextArea jsonFormatInput, TextFlow textFlow) {
+       log.warning("ERROR: " + ex.getMessage());
+        if (jsonFormatInput.getText().isEmpty()) {//no need to do anything
             textFlow.getChildren().clear();
             return;
         }
-        int errorOffset = (int) ex.getLocation().getCharOffset()-1;
-        char errorChar=' ';
-        if (errorOffset>=0)
-            errorChar=jsonFormatInput.getText().charAt(errorOffset);
+        int errorOffset = (int) ex.getLocation().getCharOffset() - 1;
+
+        char errorChar = 0;
+
+        if (errorOffset >= 0)
+            errorChar = jsonFormatInput.getText().charAt(errorOffset);
         else//force reset to 0
-            errorOffset=0;
-        if (!jsonFormatInput.getText().startsWith("{")){//definitely not json
-            Text invalidText=new Text(jsonFormatInput.getText());
+            errorOffset = 0;
+
+        if (!jsonFormatInput.getText().startsWith("{")) {//definitely not json
+            Text invalidText = new Text(jsonFormatInput.getText());
             invalidText.setFill(Color.RED);
             textFlow.getChildren().setAll(invalidText);
             return;
         }
-        if (errorChar=='\n'||errorChar==':'){
-            errorOffset-=1;
-            errorChar=jsonFormatInput.getText().charAt(errorOffset);
-        }
-        else if (Character.isLetterOrDigit(errorChar)&&jsonFormatInput.getText(0,errorOffset).lastIndexOf(":")>
-                jsonFormatInput.getText(0,errorOffset).lastIndexOf(",")) {
-            errorOffset=jsonFormatInput.getText(0,errorOffset).lastIndexOf(":");
-            errorChar=jsonFormatInput.getText().charAt(errorOffset);
+
+        if (errorChar == '\n' || errorChar == ':') {
+            errorOffset -= 1;
+            errorChar = jsonFormatInput.getText().charAt(errorOffset);
+        } else if (Character.isLetterOrDigit(errorChar) && jsonFormatInput.getText(0, errorOffset).lastIndexOf(":") >
+                jsonFormatInput.getText(0, errorOffset).lastIndexOf(",")) {
+            errorOffset = jsonFormatInput.getText(0, errorOffset).lastIndexOf(":");
+            errorChar = jsonFormatInput.getText().charAt(errorOffset);
+
+        } else if (ex.getMessage().contains("code 34")) {//for missing commas
+            errorOffset += 1;
+            errorChar = jsonFormatInput.getText().charAt(errorOffset);
         }
         Text before = new Text(jsonFormatInput.getText(0, errorOffset));
-        Text error = new Text(""+errorChar);
-        error.setStyle("-fx-fill: red;-fx-font-size: large;-fx-font-weight: bold");
+        Text error = new Text("" + errorChar);
+        error.setStyle("-fx-fill: red;-fx-font-size: large;-fx-font-weight: bold;");
 
         //remove the code part -- we have 2 different ways to display it
-        Tooltip.install(error,new Tooltip(ex.getOriginalMessage().replaceAll(", code .\\d", "")
+        Tooltip.install(error, new Tooltip(ex.getOriginalMessage().replaceAll(", code .\\d", "")
                 .replaceAll(" \\(code .*\\d\\)", "")));
 
-        Text after=new Text(jsonFormatInput.getText(errorOffset+1,jsonFormatInput.getText().length()));
+        Text after = new Text(jsonFormatInput.getText(errorOffset + 1, jsonFormatInput.getText().length()));
         textFlow.getChildren().clear();
-        textFlow.getChildren().addAll(before,error,after);
+        textFlow.getChildren().addAll(before, error, after);
         playAnimation(error);
     }
-    private void playAnimation(Node error){
+
+    private void playAnimation(Node error) {
         FadeTransition ft = new FadeTransition(Duration.seconds(1), error);
         ft.setFromValue(1.0);
         ft.setToValue(0.1);
-        ScaleTransition st=new ScaleTransition(Duration.seconds(1),error);
+        ScaleTransition st = new ScaleTransition(Duration.seconds(1), error);
         st.setFromX(0.75);
         st.setToX(1.5);
         st.setFromY(0.75);
@@ -110,6 +122,7 @@ public class JsonController implements Initializable {
         pt.setAutoReverse(true);
         pt.play();
     }
+
 
     private void doSomeMagic(JsonNode node, String nodeName, String indention, TextFlow textFlow) throws JsonProcessingException {
 
@@ -137,42 +150,40 @@ public class JsonController implements Initializable {
             Text endBrackets = new Text("]");
             endBrackets.setStyle("-fx-fill: red;-fx-font-weight: bold");
             textFlow.getChildren().add(endBrackets);
-            return;//really important
-        }
+        } else {
 
-        Text startBraces = new Text("{\n");
-        startBraces.setStyle("-fx-fill: blue;-fx-font-weight: bold");
-        textFlow.getChildren().add(startBraces);
+            Text startBraces = new Text("{\n");
+            startBraces.setStyle("-fx-fill: blue;-fx-font-weight: bold");
+            textFlow.getChildren().add(startBraces);
 
-        Iterator<Map.Entry<String, JsonNode>> iterator = node.fields();
+            Iterator<Map.Entry<String, JsonNode>> iterator = node.fields();
 
-        while (iterator.hasNext()) {
-            Map.Entry<String, JsonNode> field = iterator.next();
-            if (field.getValue().isObject() || field.getValue().isArray()) {
-                doSomeMagic(field.getValue(), field.getKey(), indention, textFlow);
-            } else {
-                Text propertyName = new Text(indention + "\"" + field.getKey() + "\"");
-                propertyName.setStyle("-fx-fill: green");
-                Text propertyValue = new Text(String.valueOf(field.getValue()));
-                if (field.getValue().isNumber())
-                    propertyValue.setStyle("-fx-fill: blue");
-                else
-                    propertyValue.setStyle("-fx-fill: brown");
+            while (iterator.hasNext()) {
+                Map.Entry<String, JsonNode> field = iterator.next();
+                if (field.getValue().isObject() || field.getValue().isArray()) {
+                    doSomeMagic(field.getValue(), field.getKey(), indention, textFlow);
+                } else {
+                    Text propertyName = new Text(indention + "\"" + field.getKey() + "\"");
+                    propertyName.setStyle("-fx-fill: green");
+                    Text propertyValue = new Text(String.valueOf(field.getValue()));
+                    if (field.getValue().isNumber())
+                        propertyValue.setStyle("-fx-fill: blue");
+                    else
+                        propertyValue.setStyle("-fx-fill: brown");
 
-                textFlow.getChildren().addAll(propertyName, new Text(" : "), propertyValue);
+                    textFlow.getChildren().addAll(propertyName, new Text(" : "), propertyValue);
+                }
+
+                if (iterator.hasNext())
+                    textFlow.getChildren().add(new Text(",\n"));
             }
+            if (indention.equals(INITIAL_INDENTION))
+                indention = "";
 
-            if (iterator.hasNext())
-                textFlow.getChildren().add(new Text(",\n"));
-
+            Text endBraces = new Text("\n" + indention + "}");
+            endBraces.setStyle("-fx-fill: blue;-fx-font-weight: bold");
+            textFlow.getChildren().add(endBraces);
         }
-
-        if (indention.equals(INITIAL_INDENTION))
-            indention = "";
-
-        Text endBraces = new Text("\n" + indention + "}");
-        endBraces.setStyle("-fx-fill: blue;-fx-font-weight: bold");
-        textFlow.getChildren().add(endBraces);
     }
 
     @FXML
