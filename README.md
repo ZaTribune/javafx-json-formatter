@@ -82,13 +82,6 @@ Watch the intelligent error highlighting in real-time:
 
 ## Quick Start
 
-### Prerequisites
-
-- **Java 26+** (LibreCA JDK recommended)
-- **Maven 3.8+**
-
-### Build from Source
-
 ```shell
 # Build the project
 mvn clean package
@@ -107,15 +100,6 @@ mvn clean package jpackage:jpackage
 # Create shaded JAR
 mvn clean shade:shade
 ```
-
-
-### Run Pre-built JAR
-
-```bash
-# After building
-java -jar target/javafx-json-formatter-1.0.0-shaded.jar
-```
-
 
 ---
 
