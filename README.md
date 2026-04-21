@@ -6,7 +6,7 @@ style="width: 120px; margin-top: 20px;" alt="JSON Formatter Logo">
 
 **A JavaFX desktop application for real-time JSON formatting and validation**
 
-[![Java](https://img.shields.io/badge/Java-26-blue?logo=java)](https://www.oracle.com/java/)
+[![Java](https://img.shields.io/badge/Java-26-blue?logo=openjdk)](https://www.oracle.com/java/)
 [![JavaFX](https://img.shields.io/badge/JavaFX-23.0.1-blue?logo=java)](https://gluonhq.com/products/javafx/)
 [![Maven](https://img.shields.io/badge/Build-Maven-blue?logo=apachemaven)](https://maven.apache.org/)
 [![License](https://img.shields.io/badge/license-MIT-darkgreen.svg)](LICENSE)
